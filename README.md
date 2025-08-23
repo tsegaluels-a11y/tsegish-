@@ -1,2 +1,0 @@
-# tsegish-
-mobile apps
