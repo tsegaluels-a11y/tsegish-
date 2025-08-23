@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="ti">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ናይ ኤችኣይቪ መድሓኒት መከታተሊ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- መእተዊ (Login) ክፍል -->
+    <div id="login-container" class="container">
+        <h2>Login - መእተዊ</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">ስም ተጠቃሚ (User)</label>
+                <input type="text" id="username" placeholder="ስም ተጠቃሚ ኣእቱ" required>
+            </div>
+            <div class="form-group">
+                <label for="password">መዝገብ ቃል (Password)</label>
+                <input type="password" id="password" placeholder="መዝገብ ቃል ኣእቱ" required>
+            </div>
+            <button type="submit">እቶ (Login)</button>
+            <p id="login-error" class="error-message"></p>
+        </form>
+    </div>
+
+    <!-- መከታተሊ (Tracker) ክፍል -->
+    <div id="tracker-container" class="container hidden">
+        <h1>ናይ ኤችኣይቪ መድሓኒት መከታተሊ (Follow-up)</h1>
+        <h2 id="welcome-message"></h2>
+        
+        <div class="form-group">
+            <label for="last-dose-date">መድሓኒትካ/ኺ መወዳእታ ዝወሰድካሉ/ክሉ መዓልቲ ኣእቱ/ዊ፡</label>
+            <input type="date" id="last-dose-date" required>
+        </div>
+
+        <button id="check-btn">ኩነታት ኣረጋግጽ</button>
+
+        <div id="result-container" class="hidden">
+            <p>ካብ መወዳእታ ዝወሰድካዮ/ክዮ ዝገበረ መዓልታት: <span id="days-since"></span></p>
+            <p id="reminder-message"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

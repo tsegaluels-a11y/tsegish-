@@ -1,0 +1,124 @@
+/* General Body Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    direction: ltr; /* Left-to-right text direction */
+}
+
+/* Container for both login and tracker */
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+}
+
+h1 {
+    color: #1c3d7e;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 20px;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Important for padding and width calculation */
+    font-size: 16px;
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Helper Classes */
+.hidden {
+    display: none;
+}
+
+/* Result and Reminder Styling */
+#result-container {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #e9ecef;
+}
+
+#result-container p {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+#days-since {
+    font-weight: bold;
+}
+
+/* Message Styling */
+.error-message {
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.reminder-ok {
+    color: #28a745; /* Green */
+    font-weight: bold;
+}
+
+.reminder-alert {
+    color: #dc3545; /* Red */
+    font-weight: bold;
+    animation: blink 1.5s linear infinite;
+}
+
+/* Blinking animation for the alert */
+@keyframes blink {
+    50% {
+        opacity: 0.5;
+    }
+}
+```
