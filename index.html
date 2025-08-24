@@ -3,61 +3,350 @@
 <head>
   <meta charset="UTF-8">
   <title>Untitled</title>
-  <link rel="stylesheet" href="./style.css">
+  
 
 </head>
 <body>
 <!-- partial:index.partial.html -->
 <!DOCTYPE html>
-<html lang="ti">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ናይ ኤችኣይቪ መድሓኒት መከታተሊ</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Patient Registration</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px; /* Increased max-width */
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px; /* Add spacing */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-caret-down-fill' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.022 2.345 4 3.023 4h9.954c.678 0 1.138 1.022.572 1.658L8.753 11.14a.5.5 0 0 1-.756 0z'/%3E%3C/svg%3E") no-repeat right 10px center;
+            padding-right: 30px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .login-form, .registration-form, .patient-report {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .login-form {
+            text-align: center;
+        }
+
+        .login-form button {
+            width: auto;
+        }
+
+        .logout-button {
+            background-color: #f44336; /* Red */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .logout-button:hover {
+            background-color: #d32f2f;
+        }
+
+        #reportButtons {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        #reportButtons button {
+            margin: 0 10px;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- መእተዊ (Login) ክፍል -->
-    <div id="login-container" class="container">
-        <h2>Login - መእተዊ</h2>
-        <form id="login-form">
+    <div class="container">
+
+        <!-- Login Form -->
+        <div class="login-form" id="loginForm">
+            <h2>Login</h2>
             <div class="form-group">
-                <label for="username">ስም ተጠቃሚ (User)</label>
-                <input type="text" id="username" placeholder="ስም ተጠቃሚ ኣእቱ" required>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
             </div>
             <div class="form-group">
-                <label for="password">መዝገብ ቃል (Password)</label>
-                <input type="password" id="password" placeholder="መዝገብ ቃል ኣእቱ" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password">
             </div>
-            <button type="submit">እቶ (Login)</button>
-            <p id="login-error" class="error-message"></p>
-        </form>
-    </div>
-
-    <!-- መከታተሊ (Tracker) ክፍል -->
-    <div id="tracker-container" class="container hidden">
-        <h1>ናይ ኤችኣይቪ መድሓኒት መከታተሊ (Follow-up)</h1>
-        <h2 id="welcome-message"></h2>
-        
-        <div class="form-group">
-            <label for="last-dose-date">መድሓኒትካ/ኺ መወዳእታ ዝወሰድካሉ/ክሉ መዓልቲ ኣእቱ/ዊ፡</label>
-            <input type="date" id="last-dose-date" required>
+            <button type="button" onclick="login()">Login</button>
+            <p id="loginErrorMessage" class="error-message"></p>
         </div>
 
-        <button id="check-btn">ኩነታት ኣረጋግጽ</button>
-
-        <div id="result-container" class="hidden">
-            <p>ካብ መወዳእታ ዝወሰድካዮ/ክዮ ዝገበረ መዓልታት: <span id="days-since"></span></p>
-            <p id="reminder-message"></p>
+        <!-- Patient Registration Form (Initially Hidden) -->
+        <div class="registration-form" id="registrationForm" style="display: none;">
+            <h1>Patient Registration</h1>
+            <form id="registrationFormContent">
+                <!-- Form fields (same as before) -->
+                <div class="form-group">
+                    <label for="serialNumber">Serial Number:</label>
+                    <input type="text" id="serialNumber" name="serialNumber">
+                </div>
+                <div class="form-group">
+                    <label for="mrn">MRN:</label>
+                    <input type="text" id="mrn" name="mrn">
+                </div>
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="middleName">Middle Name:</label>
+                    <input type="text" id="middleName" name="middleName">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="sex">Sex:</label>
+                    <select id="sex" name="sex">
+                        <option value="">Select Sex</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="woreda">Woreda:</label>
+                    <input type="text" id="woreda" name="woreda">
+                </div>
+                <div class="form-group">
+                    <label for="tabia">Tabia:</label>
+                    <input type="text" id="tabia" name="tabia">
+                </div>
+                <div class="form-group">
+                    <label for="kebelle">Kebelle:</label>
+                    <input type="text" id="kebelle" name="kebelle">
+                </div>
+                <div class="form-group">
+                    <label for="kushet">Kushet:</label>
+                    <input type="text" id="kushet" name="kushet">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]{10,15}" title="Please enter a valid phone number (10-15 digits)">
+                </div>
+                <div class="form-group">
+                    <button type="button" onclick="validateForm()">Register</button>
+                    <p id="errorMessage" class="error-message"></p>
+                    <p id="successMessage" class="success-message"></p>
+                </div>
+            </form>
+            <button class="logout-button" onclick="logout()">Logout</button>
         </div>
+
+        <!-- Patient Report (Initially Hidden) -->
+        <div class="patient-report" id="patientReport" style="display: none;">
+            <h2>Patient Report</h2>
+            <!--  This is where you would display the patient data.  For this example, we'll just show a message -->
+            <p>Patient data will be displayed here...</p>
+            <div id="reportButtons">
+                <button onclick="exportToExcel()">Export to Excel</button>
+                <button onclick="exportToPDF()">Export to PDF</button>
+            </div>
+            <button class="logout-button" onclick="logout()">Logout</button>
+        </div>
+
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Default User and Password (Replace with server-side authentication in a real application)
+        const defaultUsername = "admin";
+        const defaultPassword = "password";
+
+        // Function to handle login
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const loginErrorMessage = document.getElementById("loginErrorMessage");
+
+            if (username === defaultUsername && password === defaultPassword) {
+                // Successful login - Show the registration form and hide the login form
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("registrationForm").style.display = "block";
+                document.getElementById("patientReport").style.display = "none"; // Ensure report is hidden
+                loginErrorMessage.textContent = ""; // Clear any previous errors
+            } else {
+                // Invalid credentials
+                loginErrorMessage.textContent = "Invalid username or password.";
+            }
+        }
+
+        // Function to handle logout
+        function logout() {
+            // Clear input fields
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+
+            // Hide all sections and show only the login form
+            document.getElementById("loginForm").style.display = "block";
+            document.getElementById("registrationForm").style.display = "none";
+            document.getElementById("patientReport").style.display = "none";
+        }
+
+        function validateForm() {
+            // Reset error and success messages
+            document.getElementById("errorMessage").textContent = "";
+            document.getElementById("successMessage").textContent = "";
+
+            // Get form elements
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const age = document.getElementById("age").value;
+            const sex = document.getElementById("sex").value;
+            const phoneNumber = document.getElementById("phoneNumber").value;
+
+            // Validation
+            if (firstName.trim() === "") {
+                document.getElementById("errorMessage").textContent = "First Name is required.";
+                return;
+            }
+
+            if (lastName.trim() === "") {
+                document.getElementById("errorMessage").textContent = "Last Name is required.";
+                return;
+            }
+
+            if (age && (isNaN(age) || age < 0)) {
+                document.getElementById("errorMessage").textContent = "Age must be a positive number.";
+                return;
+            }
+
+            if (sex === "") {
+                document.getElementById("errorMessage").textContent = "Please select a sex.";
+                return;
+            }
+            if (phoneNumber.trim() !== "" && !/^[0-9]{10,15}$/.test(phoneNumber)) { // Simple phone number validation
+              document.getElementById("errorMessage").textContent = "Please enter a valid phone number (10-15 digits).";
+              return;
+            }
+
+
+            //If all validations pass,  display a success message
+            document.getElementById("successMessage").textContent = "Registration successful!";
+
+            //Show Patient Report and hide Registration Form
+            document.getElementById("registrationForm").style.display = "none";
+            document.getElementById("patientReport").style.display = "block";
+
+             // Optionally, you can clear the form
+            document.getElementById("registrationFormContent").reset();
+
+
+            // **Important:  This is where you would typically submit the data to a server using AJAX (fetch or XMLHttpRequest) to save the information.  This example only shows client-side validation and a success message.**
+        }
+
+        // Dummy export functions (replace with actual export logic)
+        function exportToExcel() {
+            alert("Exporting to Excel (not implemented)");
+            // Implement logic to generate and download Excel file.  Use a library like SheetJS (xlsx)
+        }
+
+        function exportToPDF() {
+            alert("Exporting to PDF (not implemented)");
+            // Implement logic to generate and download PDF file.  Use a library like jsPDF
+        }
+    </script>
 </body>
 </html>
 <!-- partial -->
-  <script  src="./script.js"></script>
-
+  
 </body>
 </html>
