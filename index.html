@@ -9,340 +9,727 @@
 <body>
 <!-- partial:index.partial.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="am">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Registration</title>
+    <title>ዕዳጋ ዓርቢ መለስተኛ ሆስፒታል - የታካሚዎች ምዝገባ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f4f4f4;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nyala', 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            padding: 20px;
         }
-
+        
         .container {
-            background-color: #fff;
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .hospital-header {
+            background: #006c67;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .hospital-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .hospital-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+            color: #006c67;
+        }
+        
+        .hospital-text h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .hospital-text p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .header {
+            background: #0288d1;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .login-section, .registration-section {
+            background: #f8f9fa;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px; /* Increased max-width */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
-
-        h1, h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px; /* Add spacing */
+        
+        .section-title {
+            color: #006c67;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #006c67;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-
+        
+        .search-section {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-section input {
+            flex: 1;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-excel {
+            background: #217346;
+            color: white;
+        }
+        
+        .btn-pdf {
+            background: #d32f2f;
+            color: white;
+        }
+        
+        .btn-search {
+            background: #006c67;
+            color: white;
+        }
+        
         .form-group {
             margin-bottom: 15px;
         }
-
+        
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #333;
         }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="number"],
-        select {
+        
+        input, select, textarea {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             border-radius: 4px;
-            box-sizing: border-box;
-            margin-top: 5px;
+            font-size: 16px;
         }
-
-        input[type="tel"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            margin-top: 5px;
-        }
-
-        select {
-            appearance: none;
-            -webkit-appearance: none;
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-caret-down-fill' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.022 2.345 4 3.023 4h9.954c.678 0 1.138 1.022.572 1.658L8.753 11.14a.5.5 0 0 1-.756 0z'/%3E%3C/svg%3E") no-repeat right 10px center;
-            padding-right: 30px;
-        }
-
+        
         button {
-            background-color: #4CAF50;
+            background: #006c67;
             color: white;
-            padding: 12px 20px;
             border: none;
+            padding: 12px 20px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-            width: 100%;
+            font-weight: bold;
+            transition: background 0.3s;
         }
-
+        
         button:hover {
-            background-color: #3e8e41;
+            background: #00514d;
         }
-
-        .error-message {
-            color: red;
-            margin-top: 5px;
-            font-size: 0.9em;
+        
+        .patient-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-
-        .success-message {
-            color: green;
-            margin-top: 5px;
-            font-size: 0.9em;
-        }
-
-        .login-form, .registration-form, .patient-report {
-            margin-bottom: 20px;
-            padding: 20px;
+        
+        .patient-table th, .patient-table td {
             border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 10px;
+            text-align: left;
         }
-
-        .login-form {
-            text-align: center;
-        }
-
-        .login-form button {
-            width: auto;
-        }
-
-        .logout-button {
-            background-color: #f44336; /* Red */
+        
+        .patient-table th {
+            background: #006c67;
             color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        }
+        
+        .patient-table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+            padding: 5px 10px;
             font-size: 14px;
-            margin-top: 10px;
         }
-
-        .logout-button:hover {
-            background-color: #d32f2f;
+        
+        .btn-delete {
+            background: #f44336;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
         }
-
-        #reportButtons {
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .success {
+            color: green;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 15px 20px;
             text-align: center;
-            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 14px;
+            color: #666;
         }
-
-        #reportButtons button {
-            margin: 0 10px;
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .hospital-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .hospital-info {
+                flex-direction: column;
+            }
+            
+            .hospital-logo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .export-buttons, .search-section {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-
-        <!-- Login Form -->
-        <div class="login-form" id="loginForm">
-            <h2>Login</h2>
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username">
+        <div class="hospital-header">
+            <div class="hospital-info">
+                <div class="hospital-logo">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <div class="hospital-text">
+                    <h1>ዕዳጋ ዓርቢ መባእታዊ ሆስፒታል</h1>
+               
+                </div>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password">
+            <div class="system-name">
+                <h2>የታካሚዎች ምዝገባ ስርዓት</h2>
             </div>
-            <button type="button" onclick="login()">Login</button>
-            <p id="loginErrorMessage" class="error-message"></p>
         </div>
-
-        <!-- Patient Registration Form (Initially Hidden) -->
-        <div class="registration-form" id="registrationForm" style="display: none;">
-            <h1>Patient Registration</h1>
-            <form id="registrationFormContent">
-                <!-- Form fields (same as before) -->
-                <div class="form-group">
-                    <label for="serialNumber">Serial Number:</label>
-                    <input type="text" id="serialNumber" name="serialNumber">
-                </div>
-                <div class="form-group">
-                    <label for="mrn">MRN:</label>
-                    <input type="text" id="mrn" name="mrn">
-                </div>
-                <div class="form-group">
-                    <label for="firstName">First Name:</label>
-                    <input type="text" id="firstName" name="firstName" required>
-                </div>
-                <div class="form-group">
-                    <label for="middleName">Middle Name:</label>
-                    <input type="text" id="middleName" name="middleName">
-                </div>
-                <div class="form-group">
-                    <label for="lastName">Last Name:</label>
-                    <input type="text" id="lastName" name="lastName" required>
-                </div>
-                <div class="form-group">
-                    <label for="age">Age:</label>
-                    <input type="number" id="age" name="age" min="0">
-                </div>
-                <div class="form-group">
-                    <label for="sex">Sex:</label>
-                    <select id="sex" name="sex">
-                        <option value="">Select Sex</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                 <div class="form-group">
-                    <label for="woreda">Woreda:</label>
-                    <input type="text" id="woreda" name="woreda">
-                </div>
-                <div class="form-group">
-                    <label for="tabia">Tabia:</label>
-                    <input type="text" id="tabia" name="tabia">
-                </div>
-                <div class="form-group">
-                    <label for="kebelle">Kebelle:</label>
-                    <input type="text" id="kebelle" name="kebelle">
-                </div>
-                <div class="form-group">
-                    <label for="kushet">Kushet:</label>
-                    <input type="text" id="kushet" name="kushet">
-                </div>
-                <div class="form-group">
-                    <label for="phoneNumber">Phone Number:</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]{10,15}" title="Please enter a valid phone number (10-15 digits)">
-                </div>
-                <div class="form-group">
-                    <button type="button" onclick="validateForm()">Register</button>
-                    <p id="errorMessage" class="error-message"></p>
-                    <p id="successMessage" class="success-message"></p>
-                </div>
-            </form>
-            <button class="logout-button" onclick="logout()">Logout</button>
+        
+        <div class="header">
+            <h1>የታካሚዎች ምዝገባ</h1>
+            <p>እንኳን ወደ የታካሚዎች ምዝገባ ስርዓታችን በደህና መጡ</p>
         </div>
-
-        <!-- Patient Report (Initially Hidden) -->
-        <div class="patient-report" id="patientReport" style="display: none;">
-            <h2>Patient Report</h2>
-            <!--  This is where you would display the patient data.  For this example, we'll just show a message -->
-            <p>Patient data will be displayed here...</p>
-            <div id="reportButtons">
-                <button onclick="exportToExcel()">Export to Excel</button>
-                <button onclick="exportToPDF()">Export to PDF</button>
+        
+        <div class="content">
+            <div id="loginSection" class="login-section">
+                <h2 class="section-title">ግባ/ይግባ</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">የተጠቃሚ ስም</label>
+                        <input type="text" id="username" placeholder="የተጠቃሚ ስምዎን ያስገቡ" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">የይለፍ ቃል</label>
+                        <input type="password" id="password" placeholder="የይለፍ ቃልዎን ያስገቡ" required>
+                    </div>
+                    
+                    <button type="submit">ግባ</button>
+                    <p id="loginError" class="error hidden">ያልሆነ የተጠቃሚ ስም ወይም የይለፍ ቃል</p>
+                </form>
             </div>
-            <button class="logout-button" onclick="logout()">Logout</button>
+            
+            <div id="mainSection" class="hidden">
+                <div class="registration-section">
+                    <h2 class="section-title">አዲስ ታካሚ ይመዝግቡ</h2>
+                    <form id="patientForm">
+                        <div class="form-group">
+                            <label for="patientId">የታካሚ መለያ ቁጥር</label>
+                            <input type="text" id="patientId" placeholder="የታካሚ መለያ ቁጥር" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fullName">ሙሉ ስም</label>
+                            <input type="text" id="fullName" placeholder="ሙሉ ስም" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="age">ዕድሜ</label>
+                            <input type="number" id="age" placeholder="ዕድሜ" required min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender">ጾታ</label>
+                            <select id="gender" required>
+                                <option value="">ጾታ ይምረጡ</option>
+                                <option value="ወንድ">ወንድ</option>
+                                <option value="ሴት">ሴት</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">አድራሻ</label>
+                            <textarea id="address" placeholder="አድራሻ" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">ስልክ ቁጥር</label>
+                            <input type="tel" id="phone" placeholder="ስልክ ቁጥር">
+                        </div>
+                        
+                        <button type="submit">ታካሚ ይመዝግቡ</button>
+                        <p id="formSuccess" class="success hidden">ታካሚ በተሳካ ሁኔታ ተመዝግቧል!</p>
+                    </form>
+                </div>
+                
+                <div class="patients-list">
+                    <h2 class="section-title">
+                        <span>የተመዘገቡ ታካሚዎች</span>
+                        <div class="export-buttons">
+                            <button class="btn btn-excel" id="exportExcel">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button class="btn btn-pdf" id="exportPdf">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </button>
+                        </div>
+                    </h2>
+                    
+                    <div class="search-section">
+                        <input type="text" id="searchInput" placeholder="ታካሚን በስም፣ መለያ ቁጥር ወይም ስልክ ቁጥር ፈልግ...">
+                        <button class="btn btn-search" id="searchButton">
+                            <i class="fas fa-search"></i> ፈልግ
+                        </button>
+                    </div>
+                    
+                    <table class="patient-table">
+                        <thead>
+                            <tr>
+                                <th>መለያ ቁጥር</th>
+                                <th>ስም</th>
+                                <th>ዕድሜ</th>
+                                <th>ጾታ</th>
+                                <th>ስልክ</th>
+                                <th>አድራሻ</th>
+                                <th>ድርጊት</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientsTableBody">
+                            <!-- Patient data will be inserted here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <button id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> ውጣ
+                    </button>
+                </div>
+            </div>
         </div>
-
+        
+        <div class="footer">
+            <p>Created by Tsegaluel Desta 0914855201 በ 2017 ዓ/ም</p>
+        </div>
     </div>
 
     <script>
-        // Default User and Password (Replace with server-side authentication in a real application)
-        const defaultUsername = "admin";
-        const defaultPassword = "password";
-
-        // Function to handle login
-        function login() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const loginErrorMessage = document.getElementById("loginErrorMessage");
-
-            if (username === defaultUsername && password === defaultPassword) {
-                // Successful login - Show the registration form and hide the login form
-                document.getElementById("loginForm").style.display = "none";
-                document.getElementById("registrationForm").style.display = "block";
-                document.getElementById("patientReport").style.display = "none"; // Ensure report is hidden
-                loginErrorMessage.textContent = ""; // Clear any previous errors
+        // Predefined user credentials
+        const validUsername = "nurse";
+        const validPassword = "health123";
+        
+        // DOM elements
+        const loginSection = document.getElementById('loginSection');
+        const mainSection = document.getElementById('mainSection');
+        const loginForm = document.getElementById('loginForm');
+        const patientForm = document.getElementById('patientForm');
+        const patientsTableBody = document.getElementById('patientsTableBody');
+        const loginError = document.getElementById('loginError');
+        const formSuccess = document.getElementById('formSuccess');
+        const logoutButton = document.getElementById('logoutButton');
+        const exportExcel = document.getElementById('exportExcel');
+        const exportPdf = document.getElementById('exportPdf');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        
+        // Array to store patients
+        let patients = [];
+        let editMode = false;
+        let currentEditId = null;
+        
+        // Login form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === validUsername && password === validPassword) {
+                // Successful login
+                loginSection.classList.add('hidden');
+                mainSection.classList.remove('hidden');
+                loginError.classList.add('hidden');
             } else {
-                // Invalid credentials
-                loginErrorMessage.textContent = "Invalid username or password.";
+                // Failed login
+                loginError.classList.remove('hidden');
             }
-        }
-
-        // Function to handle logout
-        function logout() {
-            // Clear input fields
-            document.getElementById("username").value = "";
-            document.getElementById("password").value = "";
-
-            // Hide all sections and show only the login form
-            document.getElementById("loginForm").style.display = "block";
-            document.getElementById("registrationForm").style.display = "none";
-            document.getElementById("patientReport").style.display = "none";
-        }
-
-        function validateForm() {
-            // Reset error and success messages
-            document.getElementById("errorMessage").textContent = "";
-            document.getElementById("successMessage").textContent = "";
-
-            // Get form elements
-            const firstName = document.getElementById("firstName").value;
-            const lastName = document.getElementById("lastName").value;
-            const age = document.getElementById("age").value;
-            const sex = document.getElementById("sex").value;
-            const phoneNumber = document.getElementById("phoneNumber").value;
-
-            // Validation
-            if (firstName.trim() === "") {
-                document.getElementById("errorMessage").textContent = "First Name is required.";
+        });
+        
+        // Patient form submission
+        patientForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const patientId = document.getElementById('patientId').value;
+            const fullName = document.getElementById('fullName').value;
+            const age = document.getElementById('age').value;
+            const gender = document.getElementById('gender').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            
+            if (editMode) {
+                // Update existing patient
+                const index = patients.findIndex(p => p.id === currentEditId);
+                if (index !== -1) {
+                    patients[index] = {
+                        id: patientId,
+                        name: fullName,
+                        age: age,
+                        gender: gender,
+                        address: address,
+                        phone: phone
+                    };
+                }
+                editMode = false;
+                currentEditId = null;
+            } else {
+                // Create new patient object
+                const newPatient = {
+                    id: patientId,
+                    name: fullName,
+                    age: age,
+                    gender: gender,
+                    address: address,
+                    phone: phone
+                };
+                
+                // Add to patients array
+                patients.push(newPatient);
+            }
+            
+            // Update the table
+            updatePatientsTable();
+            
+            // Show success message
+            formSuccess.classList.remove('hidden');
+            formSuccess.textContent = editMode ? 
+                "ታካሚ በተሳካ ሁኔታ ተስተካክሏል!" : 
+                "ካሚ  በተሳካ ሁኔታ ተመዝግቧል!";
+                
+            setTimeout(() => {
+                formSuccess.classList.add('hidden');
+            }, 3000);
+            
+            // Reset the form
+            patientForm.reset();
+        });
+        
+        // Search functionality
+        searchButton.addEventListener('click', function() {
+            performSearch();
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                updatePatientsTable();
                 return;
             }
-
-            if (lastName.trim() === "") {
-                document.getElementById("errorMessage").textContent = "Last Name is required.";
-                return;
-            }
-
-            if (age && (isNaN(age) || age < 0)) {
-                document.getElementById("errorMessage").textContent = "Age must be a positive number.";
-                return;
-            }
-
-            if (sex === "") {
-                document.getElementById("errorMessage").textContent = "Please select a sex.";
-                return;
-            }
-            if (phoneNumber.trim() !== "" && !/^[0-9]{10,15}$/.test(phoneNumber)) { // Simple phone number validation
-              document.getElementById("errorMessage").textContent = "Please enter a valid phone number (10-15 digits).";
-              return;
-            }
-
-
-            //If all validations pass,  display a success message
-            document.getElementById("successMessage").textContent = "Registration successful!";
-
-            //Show Patient Report and hide Registration Form
-            document.getElementById("registrationForm").style.display = "none";
-            document.getElementById("patientReport").style.display = "block";
-
-             // Optionally, you can clear the form
-            document.getElementById("registrationFormContent").reset();
-
-
-            // **Important:  This is where you would typically submit the data to a server using AJAX (fetch or XMLHttpRequest) to save the information.  This example only shows client-side validation and a success message.**
+            
+            const filteredPatients = patients.filter(patient => 
+                patient.id.toLowerCase().includes(searchTerm) ||
+                patient.name.toLowerCase().includes(searchTerm) ||
+                patient.phone.includes(searchTerm)
+            );
+            
+            // Clear the table
+            patientsTableBody.innerHTML = '';
+            
+            // Add filtered patients to the table
+            filteredPatients.forEach(patient => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.gender}</td>
+                    <td>${patient.phone}</td>
+                    <td>${patient.address}</td>
+                    <td class="action-buttons">
+                        <button class="btn-edit" onclick="editPatient('${patient.id}')">
+                            <i class="fas fa-edit"></i> አስተካክል
+                        </button>
+                        <button class="btn-delete" onclick="deletePatient('${patient.id}')">
+                            <i class="fas fa-trash"></i> ሰርዝ
+                        </button>
+                    </td>
+                `;
+                
+                patientsTableBody.appendChild(row);
+            });
         }
-
-        // Dummy export functions (replace with actual export logic)
-        function exportToExcel() {
-            alert("Exporting to Excel (not implemented)");
-            // Implement logic to generate and download Excel file.  Use a library like SheetJS (xlsx)
+        
+        // Update patients table function
+        function updatePatientsTable() {
+            // Clear the table
+            patientsTableBody.innerHTML = '';
+            
+            // Add each patient to the table
+            patients.forEach(patient => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.gender}</td>
+                    <td>${patient.phone}</td>
+                    <td>${patient.address}</td>
+                    <td class="action-buttons">
+                        <button class="btn-edit" onclick="editPatient('${patient.id}')">
+                            <i class="fas fa-edit"></i> አስተካክል
+                        </button>
+                        <button class="btn-delete" onclick="deletePatient('${patient.id}')">
+                            <i class="fas fa-trash"></i> ሰርዝ
+                        </button>
+                    </td>
+                `;
+                
+                patientsTableBody.appendChild(row);
+            });
         }
-
-        function exportToPDF() {
-            alert("Exporting to PDF (not implemented)");
-            // Implement logic to generate and download PDF file.  Use a library like jsPDF
-        }
+        
+        // Edit patient function
+        window.editPatient = function(id) {
+            const patient = patients.find(p => p.id === id);
+            if (patient) {
+                document.getElementById('patientId').value = patient.id;
+                document.getElementById('fullName').value = patient.name;
+                document.getElementById('age').value = patient.age;
+                document.getElementById('gender').value = patient.gender;
+                document.getElementById('address').value = patient.address;
+                document.getElementById('phone').value = patient.phone;
+                
+                editMode = true;
+                currentEditId = id;
+                
+                // Scroll to form
+                document.querySelector('.registration-section').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        };
+        
+        // Delete patient function
+        window.deletePatient = function(id) {
+            if (confirm('ይህን ታካሚ ለመሰረዝ እርግጠኛ ነዎት?')) {
+                patients = patients.filter(p => p.id !== id);
+                updatePatientsTable();
+            }
+        };
+        
+        // Export to Excel function
+        exportExcel.addEventListener('click', function() {
+            // Prepare data for export
+            const data = patients.map(patient => ({
+                'መለያ ቁጥር': patient.id,
+                'ስም': patient.name,
+                'ዕድሜ': patient.age,
+                'ጾታ': patient.gender,
+                'ስልክ': patient.phone,
+                'አድራሻ': patient.address
+            }));
+            
+            // Create worksheet
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            
+            // Create workbook
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'ታካሚዎች');
+            
+            // Export to Excel
+            XLSX.writeFile(workbook, 'ታካሚዎች_ምዝገባ.xlsx');
+        });
+        
+        // Export to PDF function
+        exportPdf.addEventListener('click', function() {
+            // Create new PDF document
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(18);
+            doc.text('ዕዳጋ ዓርቢ መለስተኛ ሆስፒታል - የታካሚዎች ምዝገባ', 14, 15);
+            doc.setFontSize(12);
+            doc.text(`ሪፖርት ቀን: ${new Date().toLocaleDateString()}`, 14, 22);
+            
+            // Prepare data for table
+            const tableData = patients.map(patient => [
+                patient.id,
+                patient.name,
+                patient.age,
+                patient.gender,
+                patient.phone,
+                patient.address
+            ]);
+            
+            // Create table
+            doc.autoTable({
+                head: [['መለያ ቁጥር', 'ስም', 'ዕድሜ', 'ጾታ', 'ስልክ', 'አድራሻ']],
+                body: tableData,
+                startY: 30,
+                theme: 'grid',
+                styles: { fontSize: 9, cellPadding: 3 },
+                headStyles: { fillColor: [0, 108, 103] }
+            });
+            
+            // Save PDF
+            doc.save('የካሚዎች_ምዝገባ.pdf');
+        });
+        
+        // Logout functionality
+        logoutButton.addEventListener('click', function() {
+            loginSection.classList.remove('hidden');
+            mainSection.classList.add('hidden');
+            loginForm.reset();
+            editMode = false;
+            currentEditId = null;
+        });
+        
+        // Add some sample patients for demonstration
+        patients = [
+            {
+                id: 'P001',
+                name: 'ዳዊት መኮንን',
+                age: 35,
+                gender: 'ወንድ',
+                address: 'አዲስ አበባ, ቦሌ',
+                phone: '0911-223344'
+            },
+            {
+                id: 'P002',
+                name: 'ሐና አለማየሁ',
+                age: 28,
+                gender: 'ሴት',
+                address: 'አዲስ አበባ, ኮተቤ',
+                phone: '0922-334455'
+            }
+        ];
+        
+        // Initialize the table with sample data
+        updatePatientsTable();
     </script>
 </body>
 </html>
