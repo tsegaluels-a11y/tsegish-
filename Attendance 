@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>ኣቴንዳንስ</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ናይ ሰራሕተኛ ኣቴንዳንስ ሲስተም</title>
+    
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f0f2f5; color: #333; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white; padding: 20px; border-radius: 10px;
+            margin-bottom: 20px; text-align: center;
+        }
+
+        /* Dashboard */
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #3498db; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .stat-card h3 { color: #777; font-size: 0.9rem; margin-bottom: 5px; }
+        .stat-card .number { font-size: 2rem; font-weight: bold; color: #2c3e50; }
+        .chart-container { background: white; padding: 20px; border-radius: 10px; height: 250px; margin-bottom: 25px; display: flex; justify-content: center;}
+
+        /* Layout */
+        .main-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 25px; }
+        @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+        
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card h2 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.2rem; }
+
+        /* Camera & Inputs */
+        .camera-box { background: #000; height: 200px; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; position: relative; margin-bottom: 10px; }
+        video { height: 100%; width: 100%; object-fit: cover; }
+        .preview-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #2ecc71; object-fit: cover; display: none; margin: 10px auto; cursor: pointer; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+
+        /* Buttons */
+        .btn { padding: 10px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; width: 100%; margin-bottom: 10px; transition: 0.2s; }
+        .btn-cap { background: #e67e22; }
+        .btn-save { background: #2ecc71; }
+        .btn-pdf { background: #e74c3c; width: auto; padding: 8px 20px; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* Type Selector */
+        .type-box { display: flex; gap: 10px; }
+        .type-opt { flex: 1; padding: 10px; border: 1px solid #ddd; text-align: center; border-radius: 5px; cursor: pointer; }
+        .type-opt.active { background: #3498db; color: white; border-color: #3498db; }
+
+        /* Search & List */
+        .search-box { margin-bottom: 15px; position: relative; }
+        .search-box input { padding-left: 35px; }
+        .search-icon { position: absolute; left: 10px; top: 10px; color: #888; }
+
+        .list-container { max-height: 500px; overflow-y: auto; }
+        .record-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; gap: 15px; }
+        .record-item:hover { background: #f9f9f9; }
+        .rec-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #eee; }
+        .rec-info { flex: 1; }
+        .rec-actions { display: flex; gap: 5px; }
+        .btn-icon { padding: 5px 10px; font-size: 0.9rem; width: auto; margin: 0; }
+        .btn-edit { background: #3498db; }
+        .btn-del { background: #e74c3c; }
+
+        /* Filter Section */
+        .filter-tools { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .date-row { display: flex; gap: 10px; align-items: flex-end; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>መዓልታዊ ኣቴንዳንስ ሲስተም መባእታዊ ሆስፒታል ዕዳጋዓርቢ</h1>
+    </header>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+        <div class="stat-card"><h3>ጠቕላላ</h3><div class="number" id="totalStat">0</div></div>
+        <div class="stat-card" style="border-left-color: #2ecc71;"><h3>ኣብ ስራሕ ዝኣተው (In)</h3><div class="number" id="inStat">0</div></div>
+        <div class="stat-card" style="border-left-color: #e74c3c;"><h3>ዝወጹ (Out)</h3><div class="number" id="outStat">0</div></div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="attChart"></canvas>
+    </div>
+
+    <div class="main-grid">
+        
+        <!-- Registration Form -->
+        <div class="card">
+            <h2 id="formTitle"><i>📸</i> ምዝገባ (Register)</h2>
+            
+            <div class="camera-box">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+            </div>
+            <button id="snapBtn" class="btn btn-cap">📸 ፎቶ ኣልዕል</button>
+            
+            <!-- Image Preview for editing/capturing -->
+            <img id="preview" class="preview-img" alt="User">
+
+            <div class="form-group">
+                <label>ስም ሰራሕተኛ</label>
+                <input type="text" id="empName" placeholder="ስም ጸሓፍ...">
+            </div>
+
+            <div class="form-group">
+                <label>ዓይነት</label>
+                <div class="type-box">
+                    <div class="type-opt active" onclick="setType('In')">መእተዊ (In)</div>
+                    <div class="type-opt" onclick="setType('Out')">መውጻኢ (Out)</div>
+                </div>
+            </div>
+
+            <div style="font-size: 0.8rem; color: #777; margin-bottom: 10px;">
+                📍 Location: <span id="gps">Finding...</span>
+            </div>
+
+            <!-- Save/Update Button -->
+            <button id="saveBtn" class="btn btn-save" disabled>💾 መዝግብ</button>
+            <button id="cancelEdit" class="btn" style="background: #7f8c8d; display: none;">ሰርዝ (Cancel)</button>
+        </div>
+
+        <!-- List & Report -->
+        <div class="card">
+            <h2><i>📊</i> ዝርዝርን ሪፖርትን</h2>
+
+            <!-- PDF Filter -->
+            <div class="filter-tools">
+                <label>PDF ሪፖርት (ምስ ፎቶ):</label>
+                <div class="date-row">
+                    <input type="date" id="dStart">
+                    <input type="date" id="dEnd">
+                    <button onclick="generatePDF()" class="btn btn-pdf">Download PDF</button>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInp" placeholder="ብስም ሰራሕተኛ ድለ..." onkeyup="renderList()">
+            </div>
+
+            <!-- List -->
+            <div class="list-container" id="listArea">
+                <!-- Items go here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Global Variables ---
+    let records = JSON.parse(localStorage.getItem('attendanceDB')) || [];
+    let currentType = 'In';
+    let currentLoc = 'N/A';
+    let editingId = null; // To track if we are editing
+    let tempImg = null;   // Stores captured image data
+    
+    // DOM Elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const preview = document.getElementById('preview');
+    const empName = document.getElementById('empName');
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelEdit');
+    const formTitle = document.getElementById('formTitle');
+    
+    // Chart
+    let myChart = null;
+
+    // --- Initialization ---
+    window.onload = () => {
+        initCamera();
+        initGPS();
+        renderList();
+        updateStats();
+        
+        // Set default dates for filter
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dStart').value = today;
+        document.getElementById('dEnd').value = today;
+    };
+
+    // 1. Camera Logic
+    async function initCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            video.srcObject = stream;
+        } catch (e) { console.log("Camera error"); }
+    }
+
+    document.getElementById('snapBtn').onclick = () => {
+        const ctx = canvas.getContext('2d');
+        canvas.width = 200; canvas.height = 150; // Smaller size for PDF performance
+        ctx.drawImage(video, 0, 0, 200, 150);
+        tempImg = canvas.toDataURL('image/jpeg', 0.7);
+        preview.src = tempImg;
+        preview.style.display = 'block';
+        video.style.display = 'none';
+        validateForm();
+    };
+
+    preview.onclick = () => { // Retake photo
+        if(!editingId) { // Only allow retake easily if not editing or logic can be adjusted
+            resetCameraView();
+        } else {
+            // In edit mode, clicking photo allows retaking
+            resetCameraView(); 
+        }
+    };
+
+    function resetCameraView() {
+        preview.style.display = 'none';
+        video.style.display = 'block';
+        tempImg = null;
+        validateForm();
+    }
+
+    // 2. GPS
+    function initGPS() {
+        if(navigator.geolocation) {
+            navigator.geolocation.watchPosition(p => {
+                currentLoc = `${p.coords.latitude.toFixed(4)}, ${p.coords.longitude.toFixed(4)}`;
+                document.getElementById('gps').innerText = currentLoc;
+            });
+        }
+    }
+
+    // 3. Form Logic
+    function setType(type) {
+        currentType = type;
+        document.querySelectorAll('.type-opt').forEach(el => {
+            el.classList.toggle('active', el.innerText.includes(type));
+        });
+    }
+
+    empName.onkeyup = validateForm;
+
+    function validateForm() {
+        // If editing, we might already have an image (tempImg might be from old record)
+        saveBtn.disabled = !(empName.value.trim() && tempImg);
+    }
+
+    // 4. SAVE / UPDATE Data
+    saveBtn.onclick = () => {
+        const now = new Date();
+        
+        if(editingId) {
+            // UPDATE Existing
+            const index = records.findIndex(r => r.id === editingId);
+            if(index !== -1) {
+                records[index].name = empName.value;
+                records[index].type = currentType;
+                records[index].img = tempImg; // Update photo if changed
+                // Date/Time usually stays same for edit, or update? Let's keep original time.
+            }
+            alert("ተስተኻኺሉ (Updated)!");
+        } else {
+            // CREATE New
+            const newRec = {
+                id: Date.now(),
+                name: empName.value,
+                type: currentType,
+                img: tempImg,
+                loc: currentLoc,
+                isoDate: now.toISOString().split('T')[0],
+                timeStr: now.toLocaleTimeString()
+            };
+            records.unshift(newRec);
+            alert("ተመዝጊቡ!");
+        }
+
+        saveToLocal();
+        resetForm();
+        renderList();
+        updateStats();
+    };
+
+    function saveToLocal() {
+        localStorage.setItem('attendanceDB', JSON.stringify(records));
+    }
+
+    function resetForm() {
+        empName.value = '';
+        resetCameraView();
+        editingId = null;
+        saveBtn.innerText = "💾 መዝግብ";
+        formTitle.innerHTML = "<i>📸</i> ምዝገባ";
+        cancelBtn.style.display = 'none';
+        saveBtn.disabled = true;
+        saveBtn.classList.remove('btn-edit');
+        saveBtn.classList.add('btn-save');
+    }
+
+    cancelBtn.onclick = resetForm;
+
+    // 5. EDIT & DELETE Logic
+    window.editRecord = (id) => {
+        const rec = records.find(r => r.id === id);
+        if(!rec) return;
+
+        // Populate Form
+        editingId = id;
+        empName.value = rec.name;
+        tempImg = rec.img;
+        preview.src = tempImg;
+        preview.style.display = 'block';
+        video.style.display = 'none';
+        
+        setType(rec.type);
+        
+        // UI Changes
+        formTitle.innerText = "✏️ ኣስተኻኽል (Edit)";
+        saveBtn.innerText = "🔄 ኣስተኻኽል (Update)";
+        saveBtn.classList.remove('btn-save');
+        saveBtn.classList.add('btn-edit');
+        cancelBtn.style.display = 'block';
+        
+        validateForm();
+        window.scrollTo(0, 0); // Scroll to form
+    };
+
+    window.deleteRecord = (id) => {
+        if(confirm("ርግጸኛ ዲኻ ክጠፍእ? (Are you sure?)")) {
+            records = records.filter(r => r.id !== id);
+            saveToLocal();
+            renderList();
+            updateStats();
+        }
+    };
+
+    // 6. RENDER LIST & SEARCH
+    window.renderList = () => {
+        const searchVal = document.getElementById('searchInp').value.toLowerCase();
+        const listDiv = document.getElementById('listArea');
+        
+        listDiv.innerHTML = '';
+
+        const filtered = records.filter(r => r.name.toLowerCase().includes(searchVal));
+
+        filtered.forEach(r => {
+            const item = document.createElement('div');
+            item.className = 'record-item';
+            item.innerHTML = `
+                <img src="${r.img}" class="rec-img">
+                <div class="rec-info">
+                    <h4>${r.name}</h4>
+                    <small style="color:#666">${r.isoDate} | ${r.timeStr}</small><br>
+                    <span style="color:${r.type=='In'?'green':'red'};font-weight:bold;font-size:0.8rem">${r.type}</span>
+                </div>
+                <div class="rec-actions">
+                    <button class="btn btn-icon btn-edit" onclick="editRecord(${r.id})">✏️</button>
+                    <button class="btn btn-icon btn-del" onclick="deleteRecord(${r.id})">🗑️</button>
+                </div>
+            `;
+            listDiv.appendChild(item);
+        });
+    };
+
+    // 7. STATISTICS & CHART
+    function updateStats() {
+        const today = new Date().toISOString().split('T')[0];
+        const todayRecs = records.filter(r => r.isoDate === today);
+        
+        const inC = todayRecs.filter(r => r.type === 'In').length;
+        const outC = todayRecs.filter(r => r.type === 'Out').length;
+        
+        document.getElementById('totalStat').innerText = records.length;
+        document.getElementById('inStat').innerText = inC;
+        document.getElementById('outStat').innerText = outC;
+
+        // Chart
+        const ctx = document.getElementById('attChart').getContext('2d');
+        if(myChart) myChart.destroy();
+        
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['In (Today)', 'Out (Today)'],
+                datasets: [{
+                    label: 'Attendance',
+                    data: [inC, outC],
+                    backgroundColor: ['#2ecc71', '#e74c3c']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    // 8. PDF GENERATION (With Photos)
+    window.generatePDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const start = document.getElementById('dStart').value;
+        const end = document.getElementById('dEnd').value;
+        
+        const data = records.filter(r => r.isoDate >= start && r.isoDate <= end);
+        
+        if(data.length === 0) { alert("No data found"); return; }
+
+        // Header
+        doc.setFontSize(16);
+        doc.text("Attendance Report", 14, 20);
+        doc.setFontSize(10);
+        doc.text(`From: ${start} to ${end}`, 14, 28);
+
+        // Prepare Table Body
+        const bodyData = data.map(r => [
+            '', // Empty column for Image
+            r.name,
+            r.type,
+            r.isoDate + ' ' + r.timeStr,
+            r.loc
+        ]);
+
+        doc.autoTable({
+            head: [['Photo', 'Name', 'Status', 'Time', 'Location']],
+            body: bodyData,
+            startY: 35,
+            rowPageBreak: 'avoid',
+            bodyStyles: { valign: 'middle', minCellHeight: 25 }, // Row height for image
+            columnStyles: {
+                0: { cellWidth: 25 } // First column width
+            },
+            didDrawCell: (data) => {
+                // Draw image in the first column
+                if (data.column.index === 0 && data.cell.section === 'body') {
+                    const rowIndex = data.row.index;
+                    if(records[rowIndex] && records[rowIndex].img) {
+                        const img = data.cell.raw === '' ? records[rowIndex].img : null; 
+                        // Note: filtering logic above matches records logic, 
+                        // but simpler to grab image from the filtered 'data' array we created
+                        const currentRecord = records.find(r => r.name === bodyData[rowIndex][1] && r.timeStr.includes(bodyData[rowIndex][3].split(' ')[1]));
+                        
+                        if(currentRecord && currentRecord.img) {
+                            doc.addImage(currentRecord.img, 'JPEG', data.cell.x + 2, data.cell.y + 2, 20, 20);
+                        }
+                    }
+                }
+            }
+        });
+
+        doc.save('Attendance_Report.pdf');
+    };
+</script>
+
+</body>
+</html>
+    
+  </body>
+  
+</html>
